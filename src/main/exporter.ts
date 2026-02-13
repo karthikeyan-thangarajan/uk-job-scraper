@@ -1,5 +1,5 @@
 import ExcelJS from 'exceljs';
-import { Job, ExportOptions } from '../shared/types';
+import { Job, ExportOptions } from './shared/types';
 import { logger } from './logger';
 import fs from 'fs';
 import path from 'path';

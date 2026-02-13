@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class GlassdoorScraper extends BaseScraper {
   readonly siteName: JobSite = 'glassdoor';
@@ -22,6 +22,11 @@ export class GlassdoorScraper extends BaseScraper {
     if (profile.datePosted !== 'all') {
       const dateMap: Record<string, string> = { '24h': '1', '7d': '7', '14d': '14', '30d': '30' };
       params.set('fromAge', dateMap[profile.datePosted] || '');
+    }
+
+    // Radius in miles
+    if (profile.radiusMiles > 0) {
+      params.set('radius', String(profile.radiusMiles));
     }
 
     return `${this.baseUrl}/Job/jobs.htm?${params.toString()}`;

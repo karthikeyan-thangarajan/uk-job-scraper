@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Job, SITE_LABELS, JobSite, UK_JOB_SITES } from '../../shared/types';
+import { Job, SITE_LABELS, JobSite, UK_JOB_SITES } from '../constants';
 
 interface JobsPageProps {
   addToast: (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning') => void;

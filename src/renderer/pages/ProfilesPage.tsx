@@ -6,8 +6,10 @@ import {
   CONTRACT_TYPES,
   WORK_MODES,
   DATE_POSTED_OPTIONS,
+  RADIUS_OPTIONS,
+  RADIUS_LABELS,
   JobSite,
-} from '../../shared/types';
+} from '../constants';
 
 interface ProfilesPageProps {
   addToast: (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -17,6 +19,7 @@ const emptyProfile: SearchProfile = {
   name: '',
   keywords: '',
   location: 'United Kingdom',
+  radiusMiles: 15,
   salaryMin: 0,
   salaryMax: 0,
   contractType: 'all',
@@ -141,7 +144,7 @@ export default function ProfilesPage({ addToast }: ProfilesPageProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Location
+                Base Town / City
               </label>
               <input
                 type="text"
@@ -149,6 +152,20 @@ export default function ProfilesPage({ addToast }: ProfilesPageProps) {
                 value={editingProfile.location}
                 onChange={e => setEditingProfile({ ...editingProfile, location: e.target.value })}
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Proximity Radius
+              </label>
+              <select
+                className="select-field"
+                value={editingProfile.radiusMiles}
+                onChange={e => setEditingProfile({ ...editingProfile, radiusMiles: parseInt(e.target.value) })}
+              >
+                {RADIUS_OPTIONS.map(r => (
+                  <option key={r} value={r}>{RADIUS_LABELS[r]}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -263,6 +280,7 @@ export default function ProfilesPage({ addToast }: ProfilesPageProps) {
                   <h3 className="font-medium text-gray-900 dark:text-white text-lg">{profile.name}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Keywords: <strong>{profile.keywords}</strong> | Location: <strong>{profile.location}</strong>
+                    {profile.radiusMiles > 0 && <> | Radius: <strong>{profile.radiusMiles} miles</strong></>}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {profile.sites.map(site => (

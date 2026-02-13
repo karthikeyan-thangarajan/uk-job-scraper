@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron';
-import { SearchProfile, ScrapeResult, ScrapeProgress, JobSite, IPC_CHANNELS } from '../../shared/types';
+import { SearchProfile, ScrapeResult, ScrapeProgress, JobSite, IPC_CHANNELS } from '../shared/types';
 import { BaseScraper } from './base-scraper';
 import { RateLimiter } from './rate-limiter';
 import { IndeedScraper } from './sites/indeed-scraper';
@@ -13,21 +13,20 @@ import { logger } from '../logger';
 
 export class ScrapeEngine {
   private rateLimiter: RateLimiter;
-  private scrapers: Map<JobSite, BaseScraper>;
+  private scrapers: Map<string, BaseScraper>;
   private isRunning = false;
   private abortControllers: AbortController[] = [];
 
   constructor(requestDelay: number = 2000, maxRetries: number = 3) {
     this.rateLimiter = new RateLimiter(requestDelay, maxRetries);
 
-    this.scrapers = new Map([
-      ['indeed', new IndeedScraper(this.rateLimiter)],
-      ['reed', new ReedScraper(this.rateLimiter)],
-      ['totaljobs', new TotaljobsScraper(this.rateLimiter)],
-      ['cvlibrary', new CVLibraryScraper(this.rateLimiter)],
-      ['linkedin', new LinkedInScraper(this.rateLimiter)],
-      ['glassdoor', new GlassdoorScraper(this.rateLimiter)],
-    ]);
+    this.scrapers = new Map<string, BaseScraper>();
+    this.scrapers.set('indeed', new IndeedScraper(this.rateLimiter));
+    this.scrapers.set('reed', new ReedScraper(this.rateLimiter));
+    this.scrapers.set('totaljobs', new TotaljobsScraper(this.rateLimiter));
+    this.scrapers.set('cvlibrary', new CVLibraryScraper(this.rateLimiter));
+    this.scrapers.set('linkedin', new LinkedInScraper(this.rateLimiter));
+    this.scrapers.set('glassdoor', new GlassdoorScraper(this.rateLimiter));
   }
 
   updateSettings(requestDelay: number, maxRetries: number): void {
@@ -46,7 +45,7 @@ export class ScrapeEngine {
     this.isRunning = true;
     this.abortControllers = [];
     const results: ScrapeResult[] = [];
-    const sites = profile.sites as JobSite[];
+    const sites = profile.sites as string[];
     let totalJobsFound = 0;
 
     logger.info(`Starting scrape for profile: ${profile.name}, sites: ${sites.join(', ')}`);

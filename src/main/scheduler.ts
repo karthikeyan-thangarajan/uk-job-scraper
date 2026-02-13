@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { BrowserWindow, Notification } from 'electron';
-import { ScheduleConfig, IPC_CHANNELS } from '../shared/types';
+import { ScheduleConfig, IPC_CHANNELS } from './shared/types';
 import { getSchedules, getProfiles, updateScheduleLastRun } from './database';
 import { ScrapeEngine } from './scraper/engine';
 import { logger } from './logger';

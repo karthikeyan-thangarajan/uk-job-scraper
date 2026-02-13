@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScheduleConfig, SearchProfile } from '../../shared/types';
+import { ScheduleConfig, SearchProfile } from '../constants';
 
 interface SchedulesPageProps {
   addToast: (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning') => void;

@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class IndeedScraper extends BaseScraper {
   readonly siteName: JobSite = 'indeed';
@@ -26,6 +26,11 @@ export class IndeedScraper extends BaseScraper {
 
     if (profile.salaryMin > 0) {
       params.set('salary', String(profile.salaryMin));
+    }
+
+    // Radius in miles from base location
+    if (profile.radiusMiles > 0) {
+      params.set('radius', String(profile.radiusMiles));
     }
 
     return `${this.baseUrl}/jobs?${params.toString()}`;

@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class TotaljobsScraper extends BaseScraper {
   readonly siteName: JobSite = 'totaljobs';
@@ -28,6 +28,11 @@ export class TotaljobsScraper extends BaseScraper {
     if (profile.datePosted !== 'all') {
       const dateMap: Record<string, string> = { '24h': '1', '7d': '7', '14d': '14', '30d': '30' };
       params.set('postedWithin', dateMap[profile.datePosted] || '');
+    }
+
+    // Radius in miles from base location
+    if (profile.radiusMiles > 0) {
+      params.set('radius', String(profile.radiusMiles));
     }
 
     return `${this.baseUrl}/jobs/in-uk?${params.toString()}`;

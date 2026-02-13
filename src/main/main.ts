@@ -35,7 +35,7 @@ import {
   ScheduleConfig,
   ExportOptions,
   AppSettings,
-} from '../shared/types';
+} from './shared/types';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -62,7 +62,7 @@ function createWindow(): void {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../renderer/src/renderer/index.html'));
   }
 
   mainWindow.once('ready-to-show', () => {

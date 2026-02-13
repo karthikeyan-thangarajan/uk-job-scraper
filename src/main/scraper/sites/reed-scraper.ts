@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class ReedScraper extends BaseScraper {
   readonly siteName: JobSite = 'reed';
@@ -34,6 +34,11 @@ export class ReedScraper extends BaseScraper {
 
     if (profile.contractType !== 'all') {
       params.set('employment', profile.contractType);
+    }
+
+    // Radius in miles from base location
+    if (profile.radiusMiles > 0) {
+      params.set('proximity', String(profile.radiusMiles));
     }
 
     const queryString = params.toString();

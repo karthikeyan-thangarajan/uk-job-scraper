@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class LinkedInScraper extends BaseScraper {
   readonly siteName: JobSite = 'linkedin';
@@ -47,6 +47,11 @@ export class LinkedInScraper extends BaseScraper {
       if (workModeMap[profile.workMode]) {
         params.set('f_WT', workModeMap[profile.workMode]);
       }
+    }
+
+    // Radius - LinkedIn uses miles converted to distance parameter
+    if (profile.radiusMiles > 0) {
+      params.set('distance', String(profile.radiusMiles));
     }
 
     // Use the public jobs page (no login required)

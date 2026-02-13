@@ -1,5 +1,5 @@
 import { BaseScraper } from '../base-scraper';
-import { Job, SearchProfile, JobSite } from '../../../shared/types';
+import { Job, SearchProfile, JobSite } from '../../shared/types';
 
 export class CVLibraryScraper extends BaseScraper {
   readonly siteName: JobSite = 'cvlibrary';
@@ -38,6 +38,11 @@ export class CVLibraryScraper extends BaseScraper {
         'part-time': 'Part Time',
       };
       params.set('tempperm', typeMap[profile.contractType] || '');
+    }
+
+    // Radius in miles from base location
+    if (profile.radiusMiles > 0) {
+      params.set('distance', String(profile.radiusMiles));
     }
 
     return `${this.baseUrl}/search-jobs?${params.toString()}`;

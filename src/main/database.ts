@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import { app } from 'electron';
-import { Job, SearchProfile, ScheduleConfig, AppSettings } from '../shared/types';
+import { Job, SearchProfile, ScheduleConfig, AppSettings } from './shared/types';
 
 let db: Database.Database;
 
@@ -35,6 +35,7 @@ export function initDatabase(): void {
       name TEXT NOT NULL,
       keywords TEXT NOT NULL,
       location TEXT DEFAULT 'United Kingdom',
+      radiusMiles INTEGER DEFAULT 15,
       salaryMin INTEGER DEFAULT 0,
       salaryMax INTEGER DEFAULT 0,
       contractType TEXT DEFAULT 'all',
@@ -169,11 +170,22 @@ export function getAllJobsForExport(profileId?: number): Job[] {
 
 // Search Profiles
 export function getProfiles(): SearchProfile[] {
-  const rows = db.prepare('SELECT * FROM search_profiles ORDER BY updatedAt DESC').all() as Array<SearchProfile & { sites: string; isActive: number }>;
+  const rows = db.prepare('SELECT * FROM search_profiles ORDER BY updatedAt DESC').all() as Array<Record<string, unknown>>;
   return rows.map(row => ({
-    ...row,
+    id: row.id as number,
+    name: row.name as string,
+    keywords: row.keywords as string,
+    location: row.location as string,
+    radiusMiles: (row.radiusMiles as number) || 15,
+    salaryMin: row.salaryMin as number,
+    salaryMax: row.salaryMax as number,
+    contractType: row.contractType as string,
+    workMode: row.workMode as string,
+    datePosted: row.datePosted as string,
     sites: JSON.parse(row.sites as string),
     isActive: Boolean(row.isActive),
+    createdAt: row.createdAt as string,
+    updatedAt: row.updatedAt as string,
   }));
 }
 
@@ -181,21 +193,23 @@ export function saveProfile(profile: SearchProfile): SearchProfile {
   const now = new Date().toISOString();
   if (profile.id) {
     db.prepare(`
-      UPDATE search_profiles SET name=?, keywords=?, location=?, salaryMin=?, salaryMax=?,
+      UPDATE search_profiles SET name=?, keywords=?, location=?, radiusMiles=?, salaryMin=?, salaryMax=?,
         contractType=?, workMode=?, datePosted=?, sites=?, isActive=?, updatedAt=?
       WHERE id=?
     `).run(
-      profile.name, profile.keywords, profile.location, profile.salaryMin, profile.salaryMax,
+      profile.name, profile.keywords, profile.location, profile.radiusMiles || 15,
+      profile.salaryMin, profile.salaryMax,
       profile.contractType, profile.workMode, profile.datePosted, JSON.stringify(profile.sites),
       profile.isActive ? 1 : 0, now, profile.id
     );
     return { ...profile, updatedAt: now };
   } else {
     const result = db.prepare(`
-      INSERT INTO search_profiles (name, keywords, location, salaryMin, salaryMax, contractType, workMode, datePosted, sites, isActive, createdAt, updatedAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO search_profiles (name, keywords, location, radiusMiles, salaryMin, salaryMax, contractType, workMode, datePosted, sites, isActive, createdAt, updatedAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
-      profile.name, profile.keywords, profile.location, profile.salaryMin, profile.salaryMax,
+      profile.name, profile.keywords, profile.location, profile.radiusMiles || 15,
+      profile.salaryMin, profile.salaryMax,
       profile.contractType, profile.workMode, profile.datePosted, JSON.stringify(profile.sites),
       profile.isActive ? 1 : 0, now, now
     );
@@ -209,8 +223,15 @@ export function deleteProfile(id: number): void {
 
 // Schedules
 export function getSchedules(): ScheduleConfig[] {
-  const rows = db.prepare('SELECT * FROM schedules').all() as Array<ScheduleConfig & { enabled: number }>;
-  return rows.map(row => ({ ...row, enabled: Boolean(row.enabled) }));
+  const rows = db.prepare('SELECT * FROM schedules').all() as Array<Record<string, unknown>>;
+  return rows.map(row => ({
+    id: row.id as number,
+    profileId: row.profileId as number,
+    cronExpression: row.cronExpression as string,
+    enabled: Boolean(row.enabled),
+    lastRun: row.lastRun as string | null,
+    nextRun: row.nextRun as string | null,
+  }));
 }
 
 export function saveSchedule(schedule: ScheduleConfig): ScheduleConfig {

@@ -8,8 +8,10 @@ import {
   CONTRACT_TYPES,
   WORK_MODES,
   DATE_POSTED_OPTIONS,
+  RADIUS_OPTIONS,
+  RADIUS_LABELS,
   JobSite,
-} from '../../shared/types';
+} from '../constants';
 
 interface SearchPageProps {
   addToast: (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -18,6 +20,7 @@ interface SearchPageProps {
 export default function SearchPage({ addToast }: SearchPageProps) {
   const [keywords, setKeywords] = useState('');
   const [location, setLocation] = useState('United Kingdom');
+  const [radiusMiles, setRadiusMiles] = useState(15);
   const [salaryMin, setSalaryMin] = useState('');
   const [salaryMax, setSalaryMax] = useState('');
   const [contractType, setContractType] = useState('all');
@@ -55,6 +58,7 @@ export default function SearchPage({ addToast }: SearchPageProps) {
       name: 'Quick Search',
       keywords: keywords.trim(),
       location,
+      radiusMiles,
       salaryMin: salaryMin ? parseInt(salaryMin) : 0,
       salaryMax: salaryMax ? parseInt(salaryMax) : 0,
       contractType,
@@ -125,18 +129,30 @@ export default function SearchPage({ addToast }: SearchPageProps) {
             />
           </div>
 
-          {/* Location */}
+          {/* Base Town / Location */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Location
+              Base Town / City
             </label>
             <input
               type="text"
               className="input-field"
-              placeholder="e.g. London, Manchester, Remote"
+              placeholder="e.g. London, Manchester, Birmingham"
               value={location}
               onChange={e => setLocation(e.target.value)}
             />
+          </div>
+
+          {/* Proximity Radius */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Proximity Radius
+            </label>
+            <select className="select-field" value={radiusMiles} onChange={e => setRadiusMiles(parseInt(e.target.value))}>
+              {RADIUS_OPTIONS.map(r => (
+                <option key={r} value={r}>{RADIUS_LABELS[r]}</option>
+              ))}
+            </select>
           </div>
 
           {/* Contract Type */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppSettings } from '../../shared/types';
+import { AppSettings } from '../constants';
 
 interface SettingsPageProps {
   addToast: (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning') => void;

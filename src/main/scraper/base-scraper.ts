@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { Job, SearchProfile, ScrapeResult, JobSite } from '../../shared/types';
+import { Job, SearchProfile, ScrapeResult, JobSite } from '../shared/types';
 import { getRandomUserAgent } from './user-agents';
 import { RateLimiter } from './rate-limiter';
 import { logger } from '../logger';
