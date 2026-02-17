@@ -29,11 +29,11 @@
     ],
     "win": {
       "target": ["nsis", "portable"],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.png"
     },
     "mac": {
       "target": ["dmg", "zip"],
-      "icon": "assets/icon.icns",
+      "icon": "assets/icon.png",
       "category": "public.app-category.productivity"
     },
     "nsis": {
